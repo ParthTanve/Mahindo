@@ -1,0 +1,64 @@
+# ---------- Mahindo Fab Tech - Hostinger (LiteSpeed/Apache) ----------
+Options -Indexes
+DirectoryIndex index.html index.php
+
+# Never expose mailer code/credentials, setup notes or backups
+<FilesMatch "^(mail-config|smtp-mailer)\.php$">
+  Require all denied
+</FilesMatch>
+<FilesMatch "(?i)(\.txt|\.md|\.bak|\.log|\.sql|\.zip)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+</FilesMatch>
+# ...but keep these public
+<FilesMatch "^(robots\.txt)$">
+  <IfModule mod_authz_core.c>
+    Require all granted
+  </IfModule>
+</FilesMatch>
+
+# Never serve .env or any dotfile (except .well-known)
+<FilesMatch "^\.(?!well-known)">
+  Require all denied
+</FilesMatch>
+<Files ".env.example">
+  Require all denied
+</Files>
+
+# Compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/xml application/javascript application/json image/svg+xml
+</IfModule>
+
+# Browser caching
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png  "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType text/css   "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType text/html  "access plus 5 minutes"
+</IfModule>
+<IfModule mod_headers.c>
+  <FilesMatch "\.(jpg|jpeg|png|webp|svg)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  # Security headers
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>
+
+# Force HTTPS and non-www (remove if you prefer www)
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  RewriteRule ^ https://mahindo.in%{REQUEST_URI} [L,R=301]
+  RewriteCond %{HTTP_HOST} ^www\.mahindo\.in$ [NC]
+  RewriteRule ^ https://mahindo.in%{REQUEST_URI} [L,R=301]
+</IfModule>

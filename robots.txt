@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /mail-config.php
+Disallow: /smtp-mailer.php
+Disallow: /smtp-test.php
+
+Sitemap: https://mahindo.in/sitemap.xml

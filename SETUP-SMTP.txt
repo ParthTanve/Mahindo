@@ -1,0 +1,38 @@
+MAHINDO - HOSTINGER SETUP WITH .env  (about 10 minutes)
+=======================================================
+
+STEP 1 - Create two mailboxes   (hPanel > Emails > Email Accounts)
+   sales@mahindo.in   (quote form)
+   hr@mahindo.in      (career form)
+   Use strong passwords. Avoid the characters  "  '  \  and spaces.
+   Log in once at https://mail.hostinger.com to confirm each password works.
+
+STEP 2 - Make your .env file
+   Copy  .env.example  to  .env  and type the two passwords. Also type any long random
+   text after TEST_KEY= (needed only for the test page). Nothing else needs changing.
+
+STEP 3 - Upload  (hPanel > Files > File Manager > public_html, show hidden files = ON)
+   Upload the whole folder contents into public_html.
+   Put .env ONE FOLDER ABOVE public_html if you can (safest: not reachable by the web).
+   If not, leave it next to index.html - .htaccess blocks it.
+   PHP 7.4+ (hPanel > Advanced > PHP Configuration).
+   Do NOT upload .env.example (optional) - and never share your real .env.
+
+STEP 4 - Test the connection
+   Open  https://mahindo.in/smtp-test.php?key=YOUR_TEST_KEY
+   Expect OK for [sales] and [hr] and two test emails.
+     535  -> wrong password / mailbox missing
+     Connect failed -> in .env set SMTP_PORT=587 and SMTP_SECURE=tls
+     Forbidden -> wrong key
+   Then DELETE smtp-test.php.
+
+STEP 5 - Check the security
+   These must show 403 or 404:
+     https://mahindo.in/.env
+     https://mahindo.in/mail-config.php
+     https://mahindo.in/smtp-mailer.php
+
+STEP 6 - Test real forms
+   Home #contact, one service page form, and career.html with a small PDF.
+   If one fails: hPanel > Advanced > Error Logs, search "Mahindo".
+   Spam folder? Hostinger sets SPF/DKIM automatically when the domain uses Hostinger DNS.
